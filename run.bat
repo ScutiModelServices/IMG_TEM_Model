@@ -6,7 +6,7 @@ REM DESCRIPTION: Shared HTTP service that runs the TEM image generation model (I
 
 cd /d "%~dp0"
 
-python -m uv sync
+uv sync
 if errorlevel 1 (
     echo uv sync failed. Install uv: winget install astral-sh.uv
     pause

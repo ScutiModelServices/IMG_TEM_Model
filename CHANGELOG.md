@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- `run.bat`: runs `uv sync` directly; `python -m uv` failed when uv was installed only as a program (winget).
 - Docker: `.dockerignore` keeps `.git`, `.venv`, tests and local state out of the build context (the same file in every model service).
 - First version: TEM-XL/2 class-conditional ImageNet image generation (256x256) on the GPU, with the admin page, tokens
   (scope, rate limit, expiry), metrics, Settings card and update checks shared with the other model services.
