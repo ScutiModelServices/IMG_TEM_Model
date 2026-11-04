@@ -1,0 +1,50 @@
+# TEMImageModel: without Docker, on Windows
+
+Run TEM-XL/2 ImageNet image generation on an NVIDIA GPU (about 4 GB of GPU memory free) directly with Python: one process, no load balancer, listening on `127.0.0.1:9190`.
+
+## Requirements
+- Windows with Python 3.11 or newer and uv (`winget install astral-sh.uv`).
+- An NVIDIA GPU with a current driver. The `uv.lock` pins a CUDA build of torch, so no extra CUDA toolkit is needed.
+- Internet on the first start (the 2.4 GB checkpoint and the VAE, and `tools/fetch_tem.py` fetches `tem.py`).
+
+## Start
+Double-click `run.bat`, or run it in a terminal from `TEMImageModel\`. It runs `uv sync` to create or update `.venv`, then starts
+`python src/app.py`. It also fetches `tem.py` into `tem_code/` on the first run. The first start downloads the 2.4 GB checkpoint and the VAE, and `tools/fetch_tem.py` fetches `tem.py`.
+
+Linux or macOS:
+```bash
+cd TEMImageModel
+uv sync
+uv run python src/app.py
+```
+On macOS there is no NVIDIA GPU, so this service cannot run there.
+
+## Settings
+`run.bat` and `app.py` read the real environment, **not** `.env`. Set variables before starting:
+
+| Variable | Default | Effect |
+|---|---|---|
+| `TEM_HOST` | `127.0.0.1` | Bind address. Use `0.0.0.0` only if other devices must reach it. |
+| `TEM_PORT` | `9190` | Port. |
+| `TEM_ADMIN_PASSWORD` | empty | Unlocks `/admin/` and requires tokens on every call but `/health`. Empty = no auth. |
+| `TEM_WARM` | `1` | Load the model at start; with `0` the first request pays the load time. |
+| `TEM_DEVICE` | `cuda` | `cpu` exists for tests only and is far too slow to use. |
+
+PowerShell: `$env:TEM_ADMIN_PASSWORD = "secret"; .\run.bat`
+Bash: `TEM_ADMIN_PASSWORD=secret uv run python src/app.py`
+
+## Check
+```bash
+curl http://127.0.0.1:9190/health
+```
+`ready` is `false` until the model has loaded. Then open `http://127.0.0.1:9190/admin/` (see [guide-web-ui.md](guide-web-ui.md)),
+make a token, and try a call:
+```bash
+curl -X POST http://127.0.0.1:9190/v1/generate -H "Content-Type: application/json" -H "X-Internal-Token: tem_..." -d '{"label":"golden retriever","seed":1}' -o dog.png
+```
+
+## Stop
+Ctrl+C in the terminal. Do not run this and the Docker stack together: both use port 9190.
+
+## Tests
+`uv run pytest`.
