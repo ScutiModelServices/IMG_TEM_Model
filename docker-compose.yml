@@ -1,0 +1,53 @@
+# TEM service: N API replicas behind one nginx address. Each replica runs the model in its own process on the GPU
+# (about 4 GB of GPU memory per replica); the downloaded weights are shared through the models volume.
+# Needs an NVIDIA GPU and the NVIDIA Container Toolkit.
+# Start:  docker compose up -d --build          (callers use http://<host>:9190)
+# Scale:  TEM_REPLICAS=3 docker compose up -d --build, then: docker compose restart tem_lb
+
+name: tem
+
+services:
+  tem:
+    build: .
+    restart: unless-stopped
+    environment:
+      TEM_ADMIN_PASSWORD: ${TEM_ADMIN_PASSWORD:-}
+      TEM_NUM_THREAD: ${TEM_NUM_THREAD:-}
+      TEM_REPLICAS: ${TEM_REPLICAS:-1}  # shown read-only on /admin/
+    volumes:
+      - models:/models
+      - tokens:/data
+    deploy:
+      replicas: ${TEM_REPLICAS:-1}
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:9190/health')"]
+      interval: 15s
+      timeout: 5s
+      start_period: 300s
+    networks: [tem]
+
+  tem_lb:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    ports:
+      - "${TEM_PORT:-9190}:9190"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      tem:
+        condition: service_healthy
+    networks: [tem]
+
+volumes:
+  models:
+  tokens:
+
+networks:
+  # Other stacks reach http://tem_lb:9190 by joining this network.
+  tem:
