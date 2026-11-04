@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Docker: `.dockerignore` keeps `.git`, `.venv`, tests and local state out of the build context (the same file in every model service).
 - First version: TEM-XL/2 class-conditional ImageNet image generation (256x256) on the GPU, with the admin page, tokens
   (scope, rate limit, expiry), metrics, Settings card and update checks shared with the other model services.
 - `POST /v1/generate` takes `class_id` or `label`, `steps`, `step_size` and `seed` and returns a PNG. `GET /v1/classes` lists the classes.

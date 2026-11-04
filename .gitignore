@@ -12,3 +12,4 @@ settings.json
 tools/deploy.local.bat
 tem_code/
 .uv_cache/
+.python-version
