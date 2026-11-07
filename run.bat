@@ -38,7 +38,7 @@ if errorlevel 1 (
     exit /b 1
 )
 
-python src/app.py
+python src/app.py --dotenv
 pause
 exit /b 0
 
