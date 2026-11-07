@@ -71,9 +71,17 @@ and a GPU.
 - 60 steps took about 7 s on a laptop RTX 4050; a CPU takes minutes.
 - The rate limit is per replica.
 
-
 ## Try it from the admin page
 
 Open `/admin/` and use **Try it** to call the public API with a service token held only in memory. Runs use normal token scopes, limits and caches; the panel shows HTTP status, latency, responses, cancellation and a curl equivalent with a token placeholder. See [the web UI guide](docs/guide-web-ui.md#try-it-send-a-real-request).
 
 Generate sends exactly one ImageNet class label or class ID to `POST /v1/generate`, with steps, step size and an optional seed. TEM does not accept a freeform image prompt. The PNG result is shown inline with a download. Only seeded calls are cached; a token's projects list limits the model name `tem-xl-256`.
+
+## Documentation
+
+- [Purpose: input, output and what it is for](docs/purpose.md)
+- [Deployment](deployment.md)
+- [Changelog](CHANGELOG.md)
+- [Docker on another machine](docs/guide-docker-deployment-device.md)
+- [Docker on this PC](docs/guide-docker-same-device.md)
+- [Run without Docker](docs/guide-no-docker-same-device.md)

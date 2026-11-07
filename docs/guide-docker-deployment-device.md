@@ -4,11 +4,13 @@ Run TEM-XL/2 ImageNet image generation on an NVIDIA GPU (about 4 GB of GPU memor
 `/media/ZimaOS-HD/Apps/TEMImageModel`). Callers reach it over the published port.
 
 ## Requirements on the machine
+
 - Docker + Compose v2, and ssh access (root over ssh is refused; use the normal user).
 - Linux with an NVIDIA GPU, the NVIDIA driver and the NVIDIA Container Toolkit. Check it: `docker run --rm --gpus all nvidia/cuda:12.6.0-base-ubuntu24.04 nvidia-smi`.
 - This service does not belong on a box without a GPU. The default `deploy.bat` target (`lex@scutiserver1.local`, ZimaOS) has none, so point `DEPLOY_HOST` and `DEPLOY_DIR` at the GPU machine (see step 1).
 
 ## 1. Publish the code (from your PC)
+
 Run `TEMImageModel\tools\deploy.bat`. Menu:
 
 | Option | Does |
@@ -24,6 +26,7 @@ Keep your own target in the git-ignored `tools\deploy.local.bat` (copy `tools\de
 `DEPLOY_HOST`, `DEPLOY_DIR` and `DEPLOY_WEB_PORT` before running. Commit `main` first: publish reads committed `main`.
 
 ## 2. First-time setup on the machine
+
 ```bash
 mkdir -p /media/ZimaOS-HD/Apps
 git clone -b live <your-repo-url> /media/ZimaOS-HD/Apps/TEMImageModel
@@ -36,6 +39,7 @@ Create `.env` (deploy option 2 copies yours, or `cp .env.example .env` and edit)
   `127.0.0.1` in the `ports:` line of `tem_lb` when only callers on the machine need it).
 
 ## 3. Start
+
 ```bash
 docker compose up -d --build
 docker compose ps
@@ -45,6 +49,7 @@ The first start downloads the 2.4 GB checkpoint and the VAE, and `tools/fetch_te
 (up to 300 s grace).
 
 ## 4. Connect callers
+
 1. Open `http://<machine-ip>:9190/admin/`, sign in with the admin password and create one token per caller
    (see [guide-web-ui.md](guide-web-ui.md)).
 2. The caller holds the URL and token:
@@ -55,7 +60,18 @@ The first start downloads the 2.4 GB checkpoint and the VAE, and `tools/fetch_te
    curl -X POST http://127.0.0.1:9190/v1/generate -H "Content-Type: application/json" -H "X-Internal-Token: tem_..." -d '{"label":"golden retriever","seed":1}' -o dog.png
    ```
 
+## Scaling
+
+```bash
+TEM_REPLICAS=2 docker compose up -d --build
+docker compose restart tem_lb
+```
+
+The restart is needed because nginx resolves replica addresses once at start. Check that the GPU has about 4 GB per
+replica (`nvidia-smi`).
+
 ## Updating
+
 ```bash
 cd /media/ZimaOS-HD/Apps/TEMImageModel
 git pull
@@ -63,7 +79,14 @@ docker compose up -d --build
 docker compose restart tem_lb
 ```
 
+## Releasing
+
+A plain publish (`tools\deploy.bat` option 1) only updates the `live` branch. For a release set `VERSION` (and
+`pyproject.toml` to the same number), commit, then run `tools\deploy.bat` option R or
+`py tools\publish_live.py --release`. `tools\make_zip.bat` then builds `zip_versions\TEMImageModel-<VERSION>.zip`.
+
 ## Problems
+
 | Symptom | Fix |
 |---|---|
 | Caller cannot reach the service | Check the caller's URL and token, and that `curl http://<machine-ip>:9190/health` works. |
