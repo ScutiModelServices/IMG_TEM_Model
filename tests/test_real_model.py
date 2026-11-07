@@ -1,4 +1,4 @@
-"""Runs the real model: needs tem_code/tem.py (tools/fetch_tem.py), the checkpoint in TEM_MODELS_DIR and a GPU.
+"""Runs the real model: needs _tem_code/tem.py (tools/fetch_tem.py), the checkpoint in TEM_MODELS_DIR and a GPU.
 Skipped when any of them is missing."""
 import io
 import os
@@ -23,7 +23,7 @@ def _gpu() -> bool:
 
 pytestmark = [pytest.mark.real_model,
               pytest.mark.skipif(not (engine_module.code_dir() / "tem.py").is_file() or not CHECKPOINT.is_file() or not _gpu(),
-                                 reason="needs tem_code/tem.py, the checkpoint and a GPU")]
+                                 reason="needs _tem_code/tem.py, the checkpoint and a GPU")]
 
 
 def test_same_seed_gives_the_same_picture_and_a_class_changes_it():

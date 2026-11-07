@@ -99,7 +99,7 @@ def _sha256(path: Path) -> str:
 
 
 def code_dir() -> Path:
-    return Path(os.environ.get("TEM_CODE_DIR", Path(__file__).resolve().parents[1] / "tem_code"))
+    return Path(os.environ.get("TEM_CODE_DIR", Path(__file__).resolve().parents[1] / "_tem_code"))
 
 
 def models_dir() -> Path:

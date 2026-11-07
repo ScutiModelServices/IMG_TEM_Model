@@ -59,7 +59,7 @@ uv sync
 uv run pytest
 ```
 
-`tests/test_real_model.py` runs the real model and is skipped without `tem_code/`, the checkpoint (`TEM_MODELS_DIR`)
+`tests/test_real_model.py` runs the real model and is skipped without `_tem_code/`, the checkpoint (`TEM_MODELS_DIR`)
 and a GPU.
 
 ## Limits worth knowing

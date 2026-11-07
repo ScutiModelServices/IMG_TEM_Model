@@ -7,11 +7,11 @@ Run TEM-XL/2 ImageNet image generation on an NVIDIA GPU (about 4 GB of GPU memor
 
 - Docker + Compose v2, and ssh access (root over ssh is refused; use the normal user).
 - Linux with an NVIDIA GPU, the NVIDIA driver and the NVIDIA Container Toolkit. Check it: `docker run --rm --gpus all nvidia/cuda:12.6.0-base-ubuntu24.04 nvidia-smi`.
-- This service does not belong on a box without a GPU. The default `deploy.bat` target (`lex@scutiserver1.local`, ZimaOS) has none, so point `DEPLOY_HOST` and `DEPLOY_DIR` at the GPU machine (see step 1).
+- This service does not belong on a box without a GPU. The default Deploy target (`lex@scutiserver1.local`, ZimaOS) has none, so point `DEPLOY_HOST` and `DEPLOY_DIR` at the GPU machine (see step 1).
 
 ## 1. Publish the code (from your PC)
 
-Run `TEMImageModel\tools\deploy.bat`. Menu:
+Run `TEMImageModel\run.bat` and choose **Deploy** (or `run.bat deploy`). Menu:
 
 | Option | Does |
 |---|---|
@@ -22,7 +22,7 @@ Run `TEMImageModel\tools\deploy.bat`. Menu:
 | 6 | chown helper, if option 2 says `Permission denied` |
 | R | Release: publish, then tag `VERSION` |
 
-Keep your own target in the git-ignored `tools\deploy.local.bat` (copy `tools\deploy.local.example.bat`), or set
+Keep your own target in the git-ignored `tools\deploy.local.ini` (copy `tools\deploy.local.example.ini`), or set
 `DEPLOY_HOST`, `DEPLOY_DIR` and `DEPLOY_WEB_PORT` before running. Commit `main` first: publish reads committed `main`.
 
 ## 2. First-time setup on the machine
@@ -81,9 +81,9 @@ docker compose restart tem_lb
 
 ## Releasing
 
-A plain publish (`tools\deploy.bat` option 1) only updates the `live` branch. For a release set `VERSION` (and
-`pyproject.toml` to the same number), commit, then run `tools\deploy.bat` option R or
-`py tools\publish_live.py --release`. `tools\make_zip.bat` then builds `zip_versions\TEMImageModel-<VERSION>.zip`.
+A plain publish (`run.bat`, Deploy, option 1) only updates the `live` branch. For a release set `VERSION` (and
+`pyproject.toml` to the same number), commit, then run `run.bat`, Deploy, option R or
+`py tools\publish_live.py --release`. `run.bat`, Build the release ZIP, then builds `_zip_versions\TEMImageModel-<VERSION>.zip`.
 
 ## Problems
 
@@ -91,6 +91,6 @@ A plain publish (`tools\deploy.bat` option 1) only updates the `live` branch. Fo
 |---|---|
 | Caller cannot reach the service | Check the caller's URL and token, and that `curl http://<machine-ip>:9190/health` works. |
 | nginx 502 after an update | `docker compose restart tem_lb`. |
-| Permission denied on push | deploy.bat option 6. |
+| Permission denied on push | run.bat Deploy option 6. |
 | Port 9190 in use | Another stack on the machine already publishes it. |
 | 503 `no GPU is visible here` | Install the NVIDIA Container Toolkit and restart Docker, then re-run the `nvidia-smi` check. |
