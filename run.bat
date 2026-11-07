@@ -1,5 +1,5 @@
 @echo off
-REM Starts the tem service on port 9190 (syncs .venv with uv on each run). Needs an NVIDIA GPU with about 4 GB free.
+REM Starts the tem service on port 29240 (syncs .venv with uv on each run). Needs an NVIDIA GPU with about 4 GB free.
 REM The first start fetches tem.py and downloads the 2.4 GB checkpoint and the VAE.
 REM LABEL: TEM Image Service
 REM DESCRIPTION: Shared HTTP service that runs the TEM image generation model (ImageNet classes) on the GPU for every project.

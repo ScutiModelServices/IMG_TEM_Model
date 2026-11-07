@@ -12,5 +12,6 @@ RUN python tools/fetch_tem.py /app/_tem_code
 COPY src ./src
 COPY web ./web
 
-EXPOSE 9190
+ENV TEM_PORT=29240
+EXPOSE 29240
 CMD ["python", "src/app.py"]

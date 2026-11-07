@@ -1,4 +1,4 @@
-"""Times the TEM service: py tools/bench.py http://127.0.0.1:9190 [--token T] [--runs 3] [--steps 60] [--save DIR]
+"""Times the TEM service: py tools/bench.py http://127.0.0.1:29240 [--token T] [--runs 3] [--steps 60] [--save DIR]
 
 Asks /v1/generate for a few classes and prints, per picture, the wait and the server's own time. Each run uses a new
 seed, so the answer cache never serves it. With --save the PNGs are written to DIR.

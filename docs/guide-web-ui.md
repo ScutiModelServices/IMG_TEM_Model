@@ -5,8 +5,8 @@ on the same device, Docker on a deployment device, no Docker). Only the address 
 
 | Run | Address |
 |---|---|
-| Docker or `run.bat` on this PC | `http://127.0.0.1:9190/admin/` |
-| Docker on the deployment box | `http://<box-ip>:9190/admin/` |
+| Docker or `run.bat` on this PC | `http://127.0.0.1:29240/admin/` |
+| Docker on the deployment box | `http://<box-ip>:29240/admin/` |
 
 If `TEM_PORT` is changed, use that port.
 
@@ -86,7 +86,7 @@ docker compose restart img_tem_model_lb
 | `Admin password required (set TEM_ADMIN_PASSWORD)` | The password is empty. Set it and restart. |
 | Token lost | Revoke it and create a new one. |
 | `/health` shows `ready: false` | The model is still loading or downloading, or loading failed (see the container logs). |
-| Never expose port 9190 to the internet | It is a LAN tool; use a firewall or VPN for remote access. |
+| Never expose port 29240 to the internet | It is a LAN tool; use a firewall or VPN for remote access. |
 
 ## Limiting a token to a model
 

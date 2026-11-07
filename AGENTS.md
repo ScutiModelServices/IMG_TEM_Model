@@ -1,6 +1,6 @@
 # IMG_TEM_Model
 
-TEM-XL/2 ImageNet image generation served over HTTP on an NVIDIA GPU, behind the shared model-service admin page, tokens and settings. Port 9190, env prefix `TEM_`, token prefix `tem_`.
+TEM-XL/2 ImageNet image generation served over HTTP on an NVIDIA GPU, behind the shared model-service admin page, tokens and settings. Port 29240, env prefix `TEM_`, token prefix `tem_`.
 
 ## Agent instructions
 This file is the one instruction file for every coding agent; `CLAUDE.md` only imports it (`@AGENTS.md`). Edit this file, never `CLAUDE.md`.

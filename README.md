@@ -46,11 +46,11 @@ downloads it again (after checking the hash). `/metrics` (admin password) is Pro
 ## Run
 
 ```bash
-docker compose up -d --build        # http://<host>:9190, needs the NVIDIA Container Toolkit
+docker compose up -d --build        # http://<host>:29240, needs the NVIDIA Container Toolkit
 ```
 
-Without Docker: `run.bat` (uv, listens on `127.0.0.1:9190`). The first start fetches `tem.py` and downloads the 2.4 GB
-checkpoint and the VAE. Time and try it: `python tools/bench.py http://127.0.0.1:9190 --save out`. See `deployment.md`.
+Without Docker: `run.bat` (uv, listens on `127.0.0.1:29240`). The first start fetches `tem.py` and downloads the 2.4 GB
+checkpoint and the VAE. Time and try it: `python tools/bench.py http://127.0.0.1:29240 --save out`. See `deployment.md`.
 
 ## Tests
 

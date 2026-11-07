@@ -1,6 +1,6 @@
 # IMG_TEM_Model: without Docker, on Windows
 
-Run TEM-XL/2 ImageNet image generation on an NVIDIA GPU (about 4 GB of GPU memory free) directly with Python: one process, no load balancer, listening on `127.0.0.1:9190`.
+Run TEM-XL/2 ImageNet image generation on an NVIDIA GPU (about 4 GB of GPU memory free) directly with Python: one process, no load balancer, listening on `127.0.0.1:29240`.
 
 ## Requirements
 - Windows with Python 3.11 or newer and uv (`winget install astral-sh.uv`).
@@ -25,7 +25,7 @@ On macOS there is no NVIDIA GPU, so this service cannot run there.
 | Variable | Default | Effect |
 |---|---|---|
 | `TEM_HOST` | `127.0.0.1` | Bind address. Use `0.0.0.0` only if other devices must reach it. |
-| `TEM_PORT` | `9190` | Port. |
+| `TEM_PORT` | `29240` | Port. |
 | `TEM_ADMIN_PASSWORD` | empty | Unlocks `/admin/` and requires tokens on every call but `/health`. Empty = no auth. |
 | `TEM_WARM` | `1` | Load the model at start; with `0` the first request pays the load time. |
 | `TEM_DEVICE` | `cuda` | `cpu` exists for tests only and is far too slow to use. |
@@ -35,16 +35,16 @@ Bash: `TEM_ADMIN_PASSWORD=secret uv run python src/app.py`
 
 ## Check
 ```bash
-curl http://127.0.0.1:9190/health
+curl http://127.0.0.1:29240/health
 ```
-`ready` is `false` until the model has loaded. Then open `http://127.0.0.1:9190/admin/` (see [guide-web-ui.md](guide-web-ui.md)),
+`ready` is `false` until the model has loaded. Then open `http://127.0.0.1:29240/admin/` (see [guide-web-ui.md](guide-web-ui.md)),
 make a token, and try a call:
 ```bash
-curl -X POST http://127.0.0.1:9190/v1/generate -H "Content-Type: application/json" -H "X-Internal-Token: tem_..." -d '{"label":"golden retriever","seed":1}' -o dog.png
+curl -X POST http://127.0.0.1:29240/v1/generate -H "Content-Type: application/json" -H "X-Internal-Token: tem_..." -d '{"label":"golden retriever","seed":1}' -o dog.png
 ```
 
 ## Stop
-Ctrl+C in the terminal. Do not run this and the Docker stack together: both use port 9190.
+Ctrl+C in the terminal. Do not run this and the Docker stack together: both use port 29240.
 
 ## Tests
 `uv run pytest`.

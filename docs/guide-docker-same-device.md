@@ -18,7 +18,7 @@ Run TEM-XL/2 ImageNet image generation on an NVIDIA GPU (about 4 GB of GPU memor
    ```bash
    cp .env.example .env
    ```
-   Set `TEM_ADMIN_PASSWORD` (empty = no auth and no admin page, fine for a local test). Leave `TEM_PORT=9190`. Leave `TEM_REPLICAS=1`.
+   Set `TEM_ADMIN_PASSWORD` (empty = no auth and no admin page, fine for a local test). Leave `TEM_PORT=29240`. Leave `TEM_REPLICAS=1`.
 2. Start:
    ```bash
    docker compose up -d --build
@@ -27,18 +27,18 @@ Run TEM-XL/2 ImageNet image generation on an NVIDIA GPU (about 4 GB of GPU memor
    (up to 300 s grace). Watch with `docker compose ps` and `docker compose logs -f img_tem_model`.
 3. Check:
    ```bash
-   curl http://127.0.0.1:9190/health
+   curl http://127.0.0.1:29240/health
    ```
    `ready` is `false` until the model has loaded, then `true`.
-4. Open the admin page: `http://127.0.0.1:9190/admin/` (see [guide-web-ui.md](guide-web-ui.md)) and make a token for each caller.
+4. Open the admin page: `http://127.0.0.1:29240/admin/` (see [guide-web-ui.md](guide-web-ui.md)) and make a token for each caller.
 5. Try a call:
    ```bash
-   curl -X POST http://127.0.0.1:9190/v1/generate -H "Content-Type: application/json" -H "X-Internal-Token: tem_..." -d '{"label":"golden retriever","seed":1}' -o dog.png
+   curl -X POST http://127.0.0.1:29240/v1/generate -H "Content-Type: application/json" -H "X-Internal-Token: tem_..." -d '{"label":"golden retriever","seed":1}' -o dog.png
    ```
    Expect a PNG file, `dog.png`.
 6. Callers connect to the published port. The caller holds the URL and token:
-   - Caller on the host: `http://127.0.0.1:9190`.
-   - Caller in another Docker stack on the same host: `http://host.docker.internal:9190`.
+   - Caller on the host: `http://127.0.0.1:29240`.
+   - Caller in another Docker stack on the same host: `http://host.docker.internal:29240`.
 
 ## Settings
 
@@ -47,7 +47,7 @@ In `.env` next to `docker-compose.yml`:
 | Variable | Default | Effect |
 |---|---|---|
 | `TEM_REPLICAS` | `1` | Number of `img_tem_model` containers. Read by Compose. |
-| `TEM_PORT` | `9190` | Host port `img_tem_model_lb` publishes. |
+| `TEM_PORT` | `29240` | Host port `img_tem_model_lb` publishes. |
 | `TEM_ADMIN_PASSWORD` | empty | Password for `/admin/`. When set, every call except `/health` must send a token as `X-Internal-Token`. Empty = no auth. |
 | `TEM_NUM_THREAD` | torch decides | Starting value for the CPU threads card (the GPU does the sampling); a value saved on `/admin/` wins. |
 
@@ -71,14 +71,14 @@ docker compose up -d --build && docker compose restart img_tem_model_lb   # afte
 Try it and time it:
 
 ```bash
-python tools/bench.py http://127.0.0.1:9190 --save out
+python tools/bench.py http://127.0.0.1:29240 --save out
 ```
 
 ## Problems
 
 | Symptom | Fix |
 |---|---|
-| `address already in use` on 9190 | Another copy (`run.bat`, or the same stack on another compose project) is running. Stop it or change `TEM_PORT`. |
+| `address already in use` on 29240 | Another copy (`run.bat`, or the same stack on another compose project) is running. Stop it or change `TEM_PORT`. |
 | `/health` shows `ready: false` for minutes | First start: the weights are downloading or loading. Check `docker compose logs -f img_tem_model`. |
 | 401 Invalid token | The caller's token is missing or revoked; make one on `/admin/`. |
 | 503 `no GPU is visible here` | The container has no GPU. Enable GPU support in Docker Desktop and re-run the `nvidia-smi` check above. |
@@ -92,4 +92,4 @@ python tools/bench.py http://127.0.0.1:9190 --save out
 | 429 | Over the token's rate limit, or too many calls waiting for the model. |
 | nginx 502 after scaling | `img_tem_model_lb` not restarted after the replica count changed. |
 
-The load balancer also joins external `citadel_core` as `img_tem_model_lb`. Start the Citadel stack first so that network exists; tool services on it use `http://img_tem_model_lb:9190`. Docker project and API image are `img_tem_model` and `img_tem_model:latest`; persistent volumes have explicit `img_tem_model_*` names. Volume migration and rollback instructions are in [CHANGELOG.md](../CHANGELOG.md).
+The load balancer also joins external `citadel_core` as `img_tem_model_lb`. Start the Citadel stack first so that network exists; tool services on it use `http://img_tem_model_lb:29240`. Docker project and API image are `img_tem_model` and `img_tem_model:latest`; persistent volumes have explicit `img_tem_model_*` names. Volume migration and rollback instructions are in [CHANGELOG.md](../CHANGELOG.md).
