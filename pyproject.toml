@@ -1,5 +1,5 @@
 [project]
-name = "tem-service"
+name = "img_tem_model"
 description = "One HTTP service that runs the TEM image generation model (ImageNet classes) on the GPU for every project"
 version = "0.1.0"
 license = "MIT"

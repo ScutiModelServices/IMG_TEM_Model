@@ -1,6 +1,6 @@
-# Deploying TEMImageModel
+# Deploying IMG_TEM_Model
 
-TEMImageModel is one HTTP service (port 9190). It runs as `tem` replicas behind an nginx load balancer, `tem_lb`.
+IMG_TEM_Model is one HTTP service (port 9190). It runs as `img_tem_model` replicas behind an nginx load balancer, `img_tem_model_lb`.
 Callers use `http://<host>:9190`; they never reach a replica directly.
 
 ## Ways to run it

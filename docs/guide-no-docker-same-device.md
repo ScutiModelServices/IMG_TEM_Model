@@ -1,4 +1,4 @@
-# TEMImageModel: without Docker, on Windows
+# IMG_TEM_Model: without Docker, on Windows
 
 Run TEM-XL/2 ImageNet image generation on an NVIDIA GPU (about 4 GB of GPU memory free) directly with Python: one process, no load balancer, listening on `127.0.0.1:9190`.
 
@@ -8,12 +8,12 @@ Run TEM-XL/2 ImageNet image generation on an NVIDIA GPU (about 4 GB of GPU memor
 - Internet on the first start (the 2.4 GB checkpoint and the VAE, and `tools/fetch_tem.py` fetches `tem.py`).
 
 ## Start
-Double-click `run.bat`, or run it in a terminal from `TEMImageModel\`. Choose **1 Run the service** in the menu, or run `run.bat run` to skip the menu. It runs `uv sync` to create or update `.venv`, then starts
+Double-click `run.bat`, or run it in a terminal from `IMG_TEM_Model\`. Choose **1 Run the service** in the menu, or run `run.bat run` to skip the menu. It runs `uv sync` to create or update `.venv`, then starts
 `python src/app.py`. It also fetches `tem.py` into `_tem_code/` on the first run. The first start downloads the 2.4 GB checkpoint and the VAE, and `tools/fetch_tem.py` fetches `tem.py`.
 
 Linux or macOS:
 ```bash
-cd TEMImageModel
+cd IMG_TEM_Model
 uv sync
 uv run python src/app.py
 ```

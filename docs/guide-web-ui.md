@@ -1,4 +1,4 @@
-# TEMImageModel: the admin web UI
+# IMG_TEM_Model: the admin web UI
 
 One page, `/admin/`, for tokens and CPU threads. It is the same for every way of running the service (Docker
 on the same device, Docker on a deployment device, no Docker). Only the address differs:
@@ -49,7 +49,7 @@ are approximate. Request counts are added to the file with that same write; uses
 counted in memory, so a crash can lose up to a minute of them. Old token files without the field still load and show **never** until next use. A companion
 `tokens.json.lock` file serializes updates across replicas without adding dependencies.
 
-Tokens live in `tokens.json` (`TEM_TOKENS_FILE`). In Docker that is the `tokens` volume at `/data`, so they
+Tokens live in `tokens.json` (`TEM_TOKENS_FILE`). In Docker that is the `img_tem_model_data` volume at `/data`, so they
 survive `docker compose down` and rebuilds. Without Docker it is `tokens.json` in the folder the service starts from.
 Tokens are enforced only while `TEM_ADMIN_PASSWORD` is set.
 
@@ -73,7 +73,7 @@ The muted line says **Replicas: N. Change TEM_REPLICAS in .env, then rebuild.** 
 page cannot change them. To change, set them in `.env`, then:
 ```bash
 docker compose up -d --build
-docker compose restart tem_lb
+docker compose restart img_tem_model_lb
 ```
 `unknown` means the variable is not set, which is normal without Docker. Without Docker there is one process.
 
@@ -110,7 +110,7 @@ The **Settings** card changes options without editing `.env` or restarting: upda
 The weights are one pinned file (SHA-256 in `src/engine.py`). The **Updates** card shows it as current when the file is
 there, and **Download new weights** fetches it again, checks the hash, and makes every replica drop its loaded copy.
 A new TEM release needs a new pin in `src/engine.py` and `tools/fetch_tem.py`. Updating the service itself:
-`docker compose up -d --build`, then `docker compose restart tem_lb`.
+`docker compose up -d --build`, then `docker compose restart img_tem_model_lb`.
 
 ## Connect to this service
 

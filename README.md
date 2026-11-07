@@ -1,10 +1,10 @@
-# TEMImageModel
+# IMG_TEM_Model
 
 TEM image generation, served over HTTP so projects ask for a picture instead of loading a model themselves. TEM
 (Transformer Energy Model, [paper](https://arxiv.org/abs/2610.31889), [code](https://github.com/int-lee/TEM)) is a
 class-conditional ImageNet model: you name one of 1000 classes ("volcano", "golden retriever") and get a 256x256 PNG.
 There are **no text prompts**. The service has the same admin page, tokens, rate limits, metrics, settings and update
-checks as `LayaModel`, `MiniCPM52BModel`, `BitNet2BModel`, `TTSPiperModel` and `TTSParadeeModel`.
+checks as `DSC_Laya_Model`, `CNV_MiniCPM52B_Model`, `CNV_BitNet2B_Model`, `TTS_Piper_Model` and `TTS_Paradee_Model`.
 
 The model runs in this process on an **NVIDIA GPU** (about 4 GB of GPU memory, 6.8 s per image on a laptop RTX 4050).
 The weights are a 2.4 GB file published by the authors on Google Drive; the service downloads it once and checks its

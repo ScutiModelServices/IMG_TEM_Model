@@ -1,4 +1,4 @@
-# TEMImageModel
+# IMG_TEM_Model
 
 TEM-XL/2 ImageNet image generation served over HTTP on an NVIDIA GPU, behind the shared model-service admin page, tokens and settings. Port 9190, env prefix `TEM_`, token prefix `tem_`.
 

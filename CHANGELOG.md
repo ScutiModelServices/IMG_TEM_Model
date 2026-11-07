@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- Renamed `TEMImageModel` to `IMG_TEM_Model`; Docker project, API image, services, load balancer and volumes now use `img_tem_model` names. Callers on `citadel_core` connect to `img_tem_model_lb` at the existing port.
+- Docker volume migration: existing volumes with old names are orphaned; renaming does not move data. Stop the old stack before copying; never use `down -v`. The commands below assume the previous default Compose project name; substitute actual volume names if `-p` or `COMPOSE_PROJECT_NAME` overrode it.
+  - `tem_models` → `img_tem_model_models`: `docker volume inspect tem_models && docker volume create img_tem_model_models && docker run --rm -v tem_models:/from:ro -v img_tem_model_models:/to alpine:3.21 sh -c "cd /from && cp -a . /to/"`
+  - `tem_tokens` → `img_tem_model_data`: `docker volume inspect tem_tokens && docker volume create img_tem_model_data && docker run --rm -v tem_tokens:/from:ro -v img_tem_model_data:/to alpine:3.21 sh -c "cd /from && cp -a . /to/"`
+- To retain an old volume instead, set its top-level volume definition to `external: true` and `name: <old-volume-name>` in a local Compose override. Rollback: stop the renamed stack, restore the previous checkout and folder name, and restart the old stack with its original volumes; copy back newer data first if the renamed stack accepted writes.
+
 - `run.bat` loads `.env` from the service folder for a local run: it passes `--dotenv`, the service prints which variable names it loaded (never the values), and a real environment variable still wins. A plain `python src/app.py` and Docker never read `.env`.
 - Untracked folders now start with `.` or `_`: `zip_versions/` is `_zip_versions/`, `tem_code/` to `_tem_code/`. A local `voices`, `tem_code` or `zip_versions` folder from an older checkout needs renaming by hand.
 - `run.bat` is now a menu (run the service, deploy, build the release ZIP) and `run.bat run|deploy|zip` skips it. `tools/deploy.bat`, `tools/make_zip.bat` and `tools/deploy.local.example.bat` are gone; the local deploy target is `tools/deploy.local.ini` (copy `tools/deploy.local.example.ini`).
