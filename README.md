@@ -85,3 +85,4 @@ Generate sends exactly one ImageNet class label or class ID to `POST /v1/generat
 - [Docker on another machine](docs/guide-docker-deployment-device.md)
 - [Docker on this PC](docs/guide-docker-same-device.md)
 - [Run without Docker](docs/guide-no-docker-same-device.md)
+- [Test it from the command line](docs/guide-cli.md)
