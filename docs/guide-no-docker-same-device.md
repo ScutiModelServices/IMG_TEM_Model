@@ -24,14 +24,14 @@ On macOS there is no NVIDIA GPU, so this service cannot run there.
 
 | Variable | Default | Effect |
 |---|---|---|
-| `TEM_HOST` | `127.0.0.1` | Bind address. Use `0.0.0.0` only if other devices must reach it. |
-| `TEM_PORT` | `29240` | Port. |
-| `TEM_ADMIN_PASSWORD` | empty | Unlocks `/admin/` and requires tokens on every call but `/health`. Empty = no auth. |
-| `TEM_WARM` | `1` | Load the model at start; with `0` the first request pays the load time. |
-| `TEM_DEVICE` | `cuda` | `cpu` exists for tests only and is far too slow to use. |
+| `SERVICE_HOST` | `127.0.0.1` | Bind address. Use `0.0.0.0` only if other devices must reach it. |
+| `SERVICE_PORT` | `29240` | Port. |
+| `SERVICE_ADMIN_PASSWORD` | empty | Unlocks `/admin/` and requires tokens on every call but `/health`. Empty = no auth. |
+| `SERVICE_WARM` | `1` | Load the model at start; with `0` the first request pays the load time. |
+| `SERVICE_DEVICE` | `cuda` | `cpu` exists for tests only and is far too slow to use. |
 
-PowerShell: `$env:TEM_ADMIN_PASSWORD = "secret"; .\run.bat`
-Bash: `TEM_ADMIN_PASSWORD=secret uv run python src/app.py`
+PowerShell: `$env:SERVICE_ADMIN_PASSWORD = "secret"; .\run.bat`
+Bash: `SERVICE_ADMIN_PASSWORD=secret uv run python src/app.py`
 
 ## Check
 ```bash

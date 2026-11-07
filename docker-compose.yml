@@ -2,7 +2,7 @@
 # (about 4 GB of GPU memory per replica); the downloaded weights are shared through the models volume.
 # Needs an NVIDIA GPU and the NVIDIA Container Toolkit.
 # Start:  docker compose up -d --build          (callers use http://<host>:29240)
-# Scale:  TEM_REPLICAS=3 docker compose up -d --build, then: docker compose restart img_tem_model_lb
+# Scale:  SERVICE_REPLICAS=3 docker compose up -d --build, then: docker compose restart img_tem_model_lb
 
 name: img_tem_model
 
@@ -12,14 +12,14 @@ services:
     image: img_tem_model:latest
     restart: unless-stopped
     environment:
-      TEM_ADMIN_PASSWORD: ${TEM_ADMIN_PASSWORD:-}
-      TEM_NUM_THREAD: ${TEM_NUM_THREAD:-}
-      TEM_REPLICAS: ${TEM_REPLICAS:-1}  # shown read-only on /admin/
+      SERVICE_ADMIN_PASSWORD: ${SERVICE_ADMIN_PASSWORD:-}
+      SERVICE_NUM_THREAD: ${SERVICE_NUM_THREAD:-}
+      SERVICE_REPLICAS: ${SERVICE_REPLICAS:-1}  # shown read-only on /admin/
     volumes:
       - img_tem_model_models:/models
       - img_tem_model_data:/data
     deploy:
-      replicas: ${TEM_REPLICAS:-1}
+      replicas: ${SERVICE_REPLICAS:-1}
       resources:
         reservations:
           devices:
@@ -38,7 +38,7 @@ services:
     image: nginx:1.27-alpine
     restart: unless-stopped
     ports:
-      - "${TEM_PORT:-29240}:29240"
+      - "${SERVICE_PORT:-29240}:29240"
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
     depends_on:

@@ -28,7 +28,7 @@ GPU rounding); without a seed one is drawn and sent back in `X-Seed`. Other fiel
 Every call starts from fresh noise. The paper's best FID uses a shared buffer of earlier results; this service does not,
 so the pictures can differ in quality from the paper's (they looked good in tests, with no FID measured).
 
-**Cache.** The *Answers kept per replica* setting (`TEM_CACHE_SIZE`, default 32, 0 = off) keeps the last images made
+**Cache.** The *Answers kept per replica* setting (`SERVICE_CACHE_SIZE`, default 32, 0 = off) keeps the last images made
 **with a seed**; the same class, steps, step size and seed is sent again without sampling (`X-Cache: hit`).
 Calls without a seed are never kept. An image over 1 MB is not kept. The cache is per replica and is emptied when the
 weights are reloaded.
@@ -37,7 +37,7 @@ A token's *projects* list on the admin page limits the models it may use; there 
 
 ## Admin page
 
-`/admin/` (password `TEM_ADMIN_PASSWORD`): tokens with model scope, rate limit and expiry, usage numbers, CPU threads,
+`/admin/` (password `SERVICE_ADMIN_PASSWORD`): tokens with model scope, rate limit and expiry, usage numbers, CPU threads,
 the Settings card (update check hours, in-flight cap, answers kept, most steps, device, load at start), and the
 Updates card. The weights are one pinned file, so **Check now** only finds a missing file and **Download new weights**
 downloads it again (after checking the hash). `/metrics` (admin password) is Prometheus text per token;
@@ -59,7 +59,7 @@ uv sync
 uv run pytest
 ```
 
-`tests/test_real_model.py` runs the real model and is skipped without `_tem_code/`, the checkpoint (`TEM_MODELS_DIR`)
+`tests/test_real_model.py` runs the real model and is skipped without `_tem_code/`, the checkpoint (`SERVICE_MODELS_DIR`)
 and a GPU.
 
 ## Limits worth knowing

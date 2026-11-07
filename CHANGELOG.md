@@ -2,6 +2,30 @@
 
 ## Unreleased
 
+### Breaking: common service environment variables
+
+Service-owned environment variables now use `SERVICE_*`. Old names are no longer read.
+Rename old names once in your real `.env`, Compose `environment:` block, and CI/secret settings.
+
+| Old name | New name |
+|---|---|
+| `TEM_ADMIN_PASSWORD` | `SERVICE_ADMIN_PASSWORD` |
+| `TEM_CACHE_SIZE` | `SERVICE_CACHE_SIZE` |
+| `TEM_CODE_DIR` | `SERVICE_CODE_DIR` |
+| `TEM_DEVICE` | `SERVICE_DEVICE` |
+| `TEM_HOST` | `SERVICE_HOST` |
+| `TEM_MAX_INFLIGHT` | `SERVICE_MAX_INFLIGHT` |
+| `TEM_MAX_STEPS` | `SERVICE_MAX_STEPS` |
+| `TEM_MODELS_DIR` | `SERVICE_MODELS_DIR` |
+| `TEM_NUM_THREAD` | `SERVICE_NUM_THREAD` |
+| `TEM_PORT` | `SERVICE_PORT` |
+| `TEM_REPLICAS` | `SERVICE_REPLICAS` |
+| `TEM_TOKENS_FILE` | `SERVICE_TOKENS_FILE` |
+| `TEM_UPDATE_CHECK_HOURS` | `SERVICE_UPDATE_CHECK_HOURS` |
+| `TEM_WARM` | `SERVICE_WARM` |
+| `TEM_WEB_DIR` | `SERVICE_WEB_DIR` |
+| `TEM_WEIGHTS_MARKER` | `SERVICE_WEIGHTS_MARKER` |
+
 - Default HTTP port moves from 9190 to 29240. Update explicit old ports in your real `.env`, saved tool-service `backends.json` connections, and browser/MCP client configurations once. Compose now uses 29240 inside API replicas and nginx; deployments using the old Compose default must recreate containers. A custom host-port override stays in effect until you change it; container ports still move to 29240.
 
 - Renamed `TEMImageModel` to `IMG_TEM_Model`; Docker project, API image, services, load balancer and volumes now use `img_tem_model` names. Callers on `citadel_core` connect to `img_tem_model_lb` at the existing port.
@@ -21,6 +45,6 @@
 - First version: TEM-XL/2 class-conditional ImageNet image generation (256x256) on the GPU, with the admin page, tokens
   (scope, rate limit, expiry), metrics, Settings card and update checks shared with the other model services.
 - `POST /v1/generate` takes `class_id` or `label`, `steps`, `step_size` and `seed` and returns a PNG. `GET /v1/classes` lists the classes.
-- Answer cache for images made with a seed (`TEM_CACHE_SIZE`, default 32, 0 = off; `X-Cache` header). No streaming.
+- Answer cache for images made with a seed (`SERVICE_CACHE_SIZE`, default 32, 0 = off; `X-Cache` header). No streaming.
 - The weights are one pinned file downloaded from the authors' Google Drive and checked by SHA-256; `tem.py` is fetched at a pinned commit by `tools/fetch_tem.py` and is not part of this repository (no license stated upstream).
 - `tools/bench.py` times a service and saves the pictures.

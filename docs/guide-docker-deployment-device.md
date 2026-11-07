@@ -33,9 +33,9 @@ git clone -b live <your-repo-url> /media/ZimaOS-HD/Apps/IMG_TEM_Model
 cd /media/ZimaOS-HD/Apps/IMG_TEM_Model
 ```
 Create `.env` (deploy option 2 copies yours, or `cp .env.example .env` and edit):
-- `TEM_ADMIN_PASSWORD`: a real password.
-- `TEM_REPLICAS=1` unless you have the memory for more.
-- `TEM_PORT=29240` (published on all interfaces; firewall it if the LAN should not reach it, or bind it to
+- `SERVICE_ADMIN_PASSWORD`: a real password.
+- `SERVICE_REPLICAS=1` unless you have the memory for more.
+- `SERVICE_PORT=29240` (published on all interfaces; firewall it if the LAN should not reach it, or bind it to
   `127.0.0.1` in the `ports:` line of `img_tem_model_lb` when only callers on the machine need it).
 
 ## 3. Start
@@ -63,7 +63,7 @@ The first start downloads the 2.4 GB checkpoint and the VAE, and `tools/fetch_te
 ## Scaling
 
 ```bash
-TEM_REPLICAS=2 docker compose up -d --build
+SERVICE_REPLICAS=2 docker compose up -d --build
 docker compose restart img_tem_model_lb
 ```
 

@@ -18,7 +18,7 @@ Run TEM-XL/2 ImageNet image generation on an NVIDIA GPU (about 4 GB of GPU memor
    ```bash
    cp .env.example .env
    ```
-   Set `TEM_ADMIN_PASSWORD` (empty = no auth and no admin page, fine for a local test). Leave `TEM_PORT=29240`. Leave `TEM_REPLICAS=1`.
+   Set `SERVICE_ADMIN_PASSWORD` (empty = no auth and no admin page, fine for a local test). Leave `SERVICE_PORT=29240`. Leave `SERVICE_REPLICAS=1`.
 2. Start:
    ```bash
    docker compose up -d --build
@@ -46,15 +46,15 @@ In `.env` next to `docker-compose.yml`:
 
 | Variable | Default | Effect |
 |---|---|---|
-| `TEM_REPLICAS` | `1` | Number of `img_tem_model` containers. Read by Compose. |
-| `TEM_PORT` | `29240` | Host port `img_tem_model_lb` publishes. |
-| `TEM_ADMIN_PASSWORD` | empty | Password for `/admin/`. When set, every call except `/health` must send a token as `X-Internal-Token`. Empty = no auth. |
-| `TEM_NUM_THREAD` | torch decides | Starting value for the CPU threads card (the GPU does the sampling); a value saved on `/admin/` wins. |
+| `SERVICE_REPLICAS` | `1` | Number of `img_tem_model` containers. Read by Compose. |
+| `SERVICE_PORT` | `29240` | Host port `img_tem_model_lb` publishes. |
+| `SERVICE_ADMIN_PASSWORD` | empty | Password for `/admin/`. When set, every call except `/health` must send a token as `X-Internal-Token`. Empty = no auth. |
+| `SERVICE_NUM_THREAD` | torch decides | Starting value for the CPU threads card (the GPU does the sampling); a value saved on `/admin/` wins. |
 
 On the **Settings** card of `/admin/` (saved in `settings.json` beside the tokens, shared by all replicas; a saved
-value beats the environment variable named in brackets): update check hours (`TEM_UPDATE_CHECK_HOURS`, 6),
-in-flight cap (`TEM_MAX_INFLIGHT`, 0 = 4), answers kept per replica (`TEM_CACHE_SIZE`, 32, 0 = off), most steps per
-image (`TEM_MAX_STEPS`, 120), device (`TEM_DEVICE`, `cuda`, restart) and load at start (`TEM_WARM`, restart). Compose
+value beats the environment variable named in brackets): update check hours (`SERVICE_UPDATE_CHECK_HOURS`, 6),
+in-flight cap (`SERVICE_MAX_INFLIGHT`, 0 = 4), answers kept per replica (`SERVICE_CACHE_SIZE`, 32, 0 = off), most steps per
+image (`SERVICE_MAX_STEPS`, 120), device (`SERVICE_DEVICE`, `cuda`, restart) and load at start (`SERVICE_WARM`, restart). Compose
 does not pass these; add the variable under `environment:` of `img_tem_model` to use one as a starting value.
 
 ## Daily use
@@ -78,14 +78,14 @@ python tools/bench.py http://127.0.0.1:29240 --save out
 
 | Symptom | Fix |
 |---|---|
-| `address already in use` on 29240 | Another copy (`run.bat`, or the same stack on another compose project) is running. Stop it or change `TEM_PORT`. |
+| `address already in use` on 29240 | Another copy (`run.bat`, or the same stack on another compose project) is running. Stop it or change `SERVICE_PORT`. |
 | `/health` shows `ready: false` for minutes | First start: the weights are downloading or loading. Check `docker compose logs -f img_tem_model`. |
 | 401 Invalid token | The caller's token is missing or revoked; make one on `/admin/`. |
 | 503 `no GPU is visible here` | The container has no GPU. Enable GPU support in Docker Desktop and re-run the `nvidia-smi` check above. |
 | Container restarts in a loop | Out of GPU memory. Close other GPU programs. |
 | `img_tem_model_lb` never starts | No replica is healthy yet (first download, or no GPU). `docker compose logs img_tem_model`. |
-| 503 "tem.py is missing" | `tools/fetch_tem.py` failed at build, or `TEM_CODE_DIR` is wrong. Rebuild. |
-| CUDA out of memory | Too many replicas for the card (about 4 GB each). Lower `TEM_REPLICAS`. |
+| 503 "tem.py is missing" | `tools/fetch_tem.py` failed at build, or `SERVICE_CODE_DIR` is wrong. Rebuild. |
+| CUDA out of memory | Too many replicas for the card (about 4 GB each). Lower `SERVICE_REPLICAS`. |
 | 403 "may not use model" | The token's list on `/admin/` does not include `tem-xl-256`. |
 | 404 on `label` | No class has that name. `GET /v1/classes?q=` lists them. |
 | 422 on `steps` | Above the *Most Langevin steps* setting. |

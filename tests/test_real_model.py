@@ -1,4 +1,4 @@
-"""Runs the real model: needs _tem_code/tem.py (tools/fetch_tem.py), the checkpoint in TEM_MODELS_DIR and a GPU.
+"""Runs the real model: needs _tem_code/tem.py (tools/fetch_tem.py), the checkpoint in SERVICE_MODELS_DIR and a GPU.
 Skipped when any of them is missing."""
 import io
 import os

@@ -9,7 +9,7 @@ from engine import TEMEngine
 @pytest.fixture(autouse=True)
 def _tmp_tokens_file(tmp_path, monkeypatch):
     """Keeps tokens.json and settings.json out of the repo, and a saved setting from leaking into the next test."""
-    monkeypatch.setenv("TEM_TOKENS_FILE", str(tmp_path / "tokens.json"))
+    monkeypatch.setenv("SERVICE_TOKENS_FILE", str(tmp_path / "tokens.json"))
 
 
 def tiny_png(shade: int = 0) -> bytes:

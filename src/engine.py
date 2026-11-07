@@ -99,11 +99,11 @@ def _sha256(path: Path) -> str:
 
 
 def code_dir() -> Path:
-    return Path(os.environ.get("TEM_CODE_DIR", Path(__file__).resolve().parents[1] / "_tem_code"))
+    return Path(os.environ.get("SERVICE_CODE_DIR", Path(__file__).resolve().parents[1] / "_tem_code"))
 
 
 def models_dir() -> Path:
-    return Path(os.environ.get("TEM_MODELS_DIR") or os.environ.get("HF_HOME") or "~/.cache/tem").expanduser()
+    return Path(os.environ.get("SERVICE_MODELS_DIR") or os.environ.get("HF_HOME") or "~/.cache/tem").expanduser()
 
 
 def load(checkpoint: Path, device: str) -> Sampler:
@@ -155,7 +155,7 @@ def _cached_sha(checkpoint: Path) -> str | None:
 
 def default_marker() -> Path:
     """File in the shared models volume whose content changes when one replica downloads new weights."""
-    configured = os.environ.get("TEM_WEIGHTS_MARKER")
+    configured = os.environ.get("SERVICE_WEIGHTS_MARKER")
     return Path(configured) if configured else models_dir() / ".tem-weights-version"
 
 
