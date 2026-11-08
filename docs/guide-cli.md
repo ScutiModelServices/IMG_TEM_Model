@@ -35,3 +35,5 @@ Send exactly one of `label` or `class_id` (0 to 999). `GET /v1/classes` lists th
 | `429` | Token rate used up or too many calls waiting; wait `Retry-After` seconds. |
 | `422` | A field is unknown or out of range; the answer says which. |
 | connection refused | Not running, or another port; see the run-path guides. |
+
+Before first inference, follow [Downloaded weights](guide-web-ui.md#downloaded-weights): open `/admin/` → Updates → Download. Startup never downloads weights.

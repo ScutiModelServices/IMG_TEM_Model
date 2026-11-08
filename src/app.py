@@ -102,7 +102,8 @@ def create_app(client: TEMEngine | None = None, admin_password: str | None = Non
         return value or 4
 
     updates = updates or Updates(client.model, cached_sha=lambda: client.cached_sha(), remote_sha=lambda: client.remote_sha(),
-                                 download=lambda: client.pull(), unload=lambda: client.unload())
+                                 download=lambda: client.pull(), unload=lambda: client.unload(),
+                                 description="Checks the pinned checkpoint and downloaded VAE without downloading. The checkpoint has no online newer-version comparison. Download installs the checkpoint and VAE; loading uses downloaded files only.")
 
     async def check_forever() -> None:
         """Checks every `update_check_hours` (0 = off). The value is read again every second, so the admin page can change it."""
@@ -140,7 +141,7 @@ def create_app(client: TEMEngine | None = None, admin_password: str | None = Non
         background: list[asyncio.Task] = []
         try:
             if config.get("warm") if config else warm:
-                # In the background: the first start downloads 2.4 GB, and /health must answer meanwhile.
+                # Load downloaded weights in the background so /health remains available.
                 background.append(asyncio.create_task(warm_up()))
             if config or check_hours > 0:
                 background.append(asyncio.create_task(check_forever()))

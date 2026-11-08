@@ -3,6 +3,8 @@
 IMG_TEM_Model is one HTTP service (port 29240). It runs as `img_tem_model` replicas behind an nginx load balancer, `img_tem_model_lb`.
 Callers use `http://<host>:29240`; they never reach a replica directly.
 
+Weights are downloaded explicitly from the [Updates card](docs/guide-web-ui.md#downloaded-weights); startup never downloads weights.
+
 ## Ways to run it
 
 Each path has its own guide. Pick one.

@@ -5,11 +5,11 @@ Run TEM-XL/2 ImageNet image generation on an NVIDIA GPU (about 4 GB of GPU memor
 ## Requirements
 - Windows with Python 3.11 or newer and uv (`winget install astral-sh.uv`).
 - An NVIDIA GPU with a current driver. The `uv.lock` pins a CUDA build of torch, so no extra CUDA toolkit is needed.
-- Internet on the first start (the 2.4 GB checkpoint and the VAE, and `tools/fetch_tem.py` fetches `tem.py`).
+- Internet for admin Download (checkpoint and VAE) and setup of `tem.py`.
 
 ## Start
 Double-click `run.bat`, or run it in a terminal from `IMG_TEM_Model\`. Choose **1 Run the service** in the menu, or run `run.bat run` to skip the menu. It runs `uv sync` to create or update `.venv`, then starts
-`python src/app.py`. It also fetches `tem.py` into `_tem_code/` on the first run. The first start downloads the 2.4 GB checkpoint and the VAE, and `tools/fetch_tem.py` fetches `tem.py`.
+`python src/app.py`. It also fetches `tem.py` into `_tem_code/` on the first run. The admin Download installs the 2.4 GB checkpoint and VAE; `tools/fetch_tem.py` fetches `tem.py`.
 
 Linux or macOS:
 ```bash
@@ -49,3 +49,5 @@ Ctrl+C in the terminal. Do not run this and the Docker stack together: both use 
 
 ## Tests
 `uv run pytest`.
+
+Before first inference, follow [Downloaded weights](guide-web-ui.md#downloaded-weights): open `/admin/` → Updates → Download. Startup never downloads weights.

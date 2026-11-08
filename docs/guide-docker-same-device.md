@@ -6,7 +6,7 @@ Run TEM-XL/2 ImageNet image generation on an NVIDIA GPU (about 4 GB of GPU memor
 
 - Docker Desktop with Compose v2 (Windows: WSL2 backend).
 - An NVIDIA GPU with a current driver, and GPU support in Docker Desktop. Check it: `docker run --rm --gpus all nvidia/cuda:12.6.0-base-ubuntu24.04 nvidia-smi` must print your card.
-- Network access on the first start: Google Drive (checkpoint), Hugging Face (VAE `stabilityai/sd-vae-ft-mse`) and
+- Network access for admin Download: Google Drive (checkpoint), Hugging Face (VAE `stabilityai/sd-vae-ft-mse`) and
   GitHub at image build (`tem.py`, pinned commit).
 - GPU memory per replica: about 4 GB at 256x256 (measured: 3.9 GB peak). A 6 GB card runs one replica; replicas
   share the GPU, so more replicas only help a bigger card.
@@ -23,7 +23,7 @@ Run TEM-XL/2 ImageNet image generation on an NVIDIA GPU (about 4 GB of GPU memor
    ```bash
    docker compose up -d --build
    ```
-   The first start downloads the 2.4 GB checkpoint and the VAE, and `tools/fetch_tem.py` fetches `tem.py` into the `img_tem_model_models` volume. `img_tem_model_lb` starts only after the service is healthy
+   The admin Download installs the 2.4 GB checkpoint and VAE; `tools/fetch_tem.py` fetches `tem.py` into the `img_tem_model_models` volume. `img_tem_model_lb` starts only after the service is healthy
    (up to 300 s grace). Watch with `docker compose ps` and `docker compose logs -f img_tem_model`.
 3. Check:
    ```bash
@@ -79,11 +79,11 @@ python tools/bench.py http://127.0.0.1:29240 --save out
 | Symptom | Fix |
 |---|---|
 | `address already in use` on 29240 | Another copy (`run.bat`, or the same stack on another compose project) is running. Stop it or change `SERVICE_PORT`. |
-| `/health` shows `ready: false` for minutes | First start: the weights are downloading or loading. Check `docker compose logs -f img_tem_model`. |
+| `/health` shows `ready: false` for minutes | Download weights from the Updates card, then wait for loading. Check `docker compose logs -f img_tem_model`. |
 | 401 Invalid token | The caller's token is missing or revoked; make one on `/admin/`. |
 | 503 `no GPU is visible here` | The container has no GPU. Enable GPU support in Docker Desktop and re-run the `nvidia-smi` check above. |
 | Container restarts in a loop | Out of GPU memory. Close other GPU programs. |
-| `img_tem_model_lb` never starts | No replica is healthy yet (first download, or no GPU). `docker compose logs img_tem_model`. |
+| `img_tem_model_lb` never starts | No replica is healthy yet (startup failure, or no GPU). `docker compose logs img_tem_model`. |
 | 503 "tem.py is missing" | `tools/fetch_tem.py` failed at build, or `SERVICE_CODE_DIR` is wrong. Rebuild. |
 | CUDA out of memory | Too many replicas for the card (about 4 GB each). Lower `SERVICE_REPLICAS`. |
 | 403 "may not use model" | The token's list on `/admin/` does not include `tem-xl-256`. |
@@ -93,3 +93,5 @@ python tools/bench.py http://127.0.0.1:29240 --save out
 | nginx 502 after scaling | `img_tem_model_lb` not restarted after the replica count changed. |
 
 The load balancer also joins external `citadel_core` as `img_tem_model_lb`. Start the Citadel stack first so that network exists; tool services on it use `http://img_tem_model_lb:29240`. Docker project and API image are `img_tem_model` and `img_tem_model:latest`; persistent volumes have explicit `img_tem_model_*` names. Volume migration and rollback instructions are in [CHANGELOG.md](../CHANGELOG.md).
+
+Before first inference, follow [Downloaded weights](guide-web-ui.md#downloaded-weights): open `/admin/` → Updates → Download. Startup never downloads weights.

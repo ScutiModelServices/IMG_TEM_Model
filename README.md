@@ -7,7 +7,7 @@ There are **no text prompts**. The service has the same admin page, tokens, rate
 checks as `DSC_Laya_Model`, `CNV_MiniCPM52B_Model`, `CNV_BitNet2B_Model`, `TTS_Piper_Model` and `TTS_Paradee_Model`.
 
 The model runs in this process on an **NVIDIA GPU** (about 4 GB of GPU memory, 6.8 s per image on a laptop RTX 4050).
-The weights are a 2.4 GB file published by the authors on Google Drive; the service downloads it once and checks its
+The weights are a 2.4 GB file published by the authors on Google Drive; the admin Download installs it and checks its
 SHA-256. **The TEM code and weights have no stated license**: use this for your own projects and ask the authors before
 anything else. This repository does not contain `tem.py`; `tools/fetch_tem.py` downloads it at a pinned commit.
 
@@ -45,11 +45,13 @@ downloads it again (after checking the hash). `/metrics` (admin password) is Pro
 
 ## Run
 
+Weights load only from downloaded files. An empty installation still serves `/admin/` and `/health` with `ready: false`; inference returns 503. Open `/admin/` → **Updates** → **Download** before the first inference. Checks run online without downloading; only an admin Download replaces weights and reloads replicas.
+
 ```bash
 docker compose up -d --build        # http://<host>:29240, needs the NVIDIA Container Toolkit
 ```
 
-Without Docker: `run.bat` (uv, listens on `127.0.0.1:29240`). The first start fetches `tem.py` and downloads the 2.4 GB
+Without Docker: `run.bat` (uv, listens on `127.0.0.1:29240`). Setup fetches `tem.py`; admin Download installs the 2.4 GB
 checkpoint and the VAE. Time and try it: `python tools/bench.py http://127.0.0.1:29240 --save out`. See `deployment.md`.
 
 ## Tests

@@ -45,7 +45,7 @@ docker compose up -d --build
 docker compose ps
 curl http://127.0.0.1:29240/health
 ```
-The first start downloads the 2.4 GB checkpoint and the VAE, and `tools/fetch_tem.py` fetches `tem.py` into the `img_tem_model_models` volume; `img_tem_model_lb` waits for a healthy service
+The admin Download installs the 2.4 GB checkpoint and VAE; `tools/fetch_tem.py` fetches `tem.py` into the `img_tem_model_models` volume; `img_tem_model_lb` waits for a healthy service
 (up to 300 s grace).
 
 ## 4. Connect callers
@@ -94,3 +94,5 @@ A plain publish (`run.bat`, Deploy, option 1) only updates the `live` branch. Fo
 | Permission denied on push | run.bat Deploy option 6. |
 | Port 29240 in use | Another stack on the machine already publishes it. |
 | 503 `no GPU is visible here` | Install the NVIDIA Container Toolkit and restart Docker, then re-run the `nvidia-smi` check. |
+
+Before first inference, follow [Downloaded weights](guide-web-ui.md#downloaded-weights): open `/admin/` → Updates → Download. Startup never downloads weights.

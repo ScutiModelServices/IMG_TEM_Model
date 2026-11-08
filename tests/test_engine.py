@@ -44,11 +44,16 @@ def test_resolve_class_by_id_and_by_name():
         engine.resolve_class(1000, None)
 
 
-def test_a_missing_file_is_downloaded_before_loading():
+def test_missing_weights_require_admin_download_before_loading():
     state = {"there": False}
     engine = make_engine(cached_sha=lambda path: "sha" if state["there"] else None,
                          download=lambda path: state.update(there=True))
-    run(engine.generate(0, 1, 1.0, 0))
+    with pytest.raises(EngineError, match="Download") as caught:
+        run(engine.generate(0, 1, 1.0, 0))
+    assert caught.value.status == 503 and not engine.ready
+    assert not state["there"] and not engine.loads
+    run(engine.pull())
+    run(engine.warm())
     assert state["there"] and len(engine.loads) == 1
 
 

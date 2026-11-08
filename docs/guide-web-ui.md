@@ -26,7 +26,7 @@ the password and any freshly created token. If browser storage is blocked, sign 
 
 The header shows the service address and a health badge with an icon and text: **Healthy**, **Starting**, or
 **Unreachable**. Health is checked without authentication every 10 seconds while signed in. **Starting** means the model
-is not loaded yet (the first start downloads it). Tiles show model readiness, replicas, parallel generations, CPU threads, and active tokens.
+is not loaded yet (an admin must download it first). Tiles show model readiness, replicas, parallel generations, CPU threads, and active tokens.
 Use **Theme** to cycle between system, light, and dark appearance; this preference is saved in the browser.
 
 ## Tokens
@@ -85,7 +85,7 @@ docker compose restart img_tem_model_lb
 | `Wrong admin password` | Password differs from `SERVICE_ADMIN_PASSWORD` in the running container. Recreate it after editing `.env`. |
 | `Admin password required (set SERVICE_ADMIN_PASSWORD)` | The password is empty. Set it and restart. |
 | Token lost | Revoke it and create a new one. |
-| `/health` shows `ready: false` | The model is still loading or downloading, or loading failed (see the container logs). |
+| `/health` shows `ready: false` | The model is missing downloaded weights, still loading, or loading failed (see the container logs). |
 | Never expose port 29240 to the internet | It is a LAN tool; use a firewall or VPN for remote access. |
 
 ## Limiting a token to a model
@@ -131,3 +131,15 @@ The browser caps uploads at **10 MiB**, displayed text at **256 KiB**, and binar
 ### This service's request
 
 Generate sends exactly one ImageNet class label or class ID to `POST /v1/generate`, with steps, step size and an optional seed. TEM does not accept a freeform image prompt. The PNG result is shown inline with a download. Only seeded calls are cached; a token's projects list limits the model name `tem-xl-256`.
+
+## Downloaded weights
+
+Weights load only from downloaded files. An empty installation still serves `/admin/` and `/health` with `ready: false`; inference returns 503. Open `/admin/` → **Updates** → **Download** before the first inference. Checks run online without downloading; only an admin Download replaces weights and reloads replicas.
+
+Alternatively, use the authenticated admin download route (replace the password placeholder):
+
+```bash
+curl -X POST http://127.0.0.1:29240/admin/updates/weights -H "X-Internal-Token: <ADMIN_PASSWORD>"
+```
+
+The Updates card shows the downloaded and online versions and reports when a newer version is available. A pinned file or local import has no online newer-version comparison. Download runs only when requested by an admin.
