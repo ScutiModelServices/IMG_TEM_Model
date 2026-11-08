@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Fix: after Download, a CPU threads change or a sync from another replica drops the loaded model, the service now reloads it in the background (when "Load the model at start" is on) instead of showing "Starting" on `/admin/` until the first request.
 - Breaking: startup, warm-up and inference load downloaded weights only. Before first inference open `/admin/` → Updates → Download; an empty installation keeps health/admin available and returns 503 for inference.
 
 - `SERVICE_MODELS_DIR` sets where a local (no Docker) run keeps downloaded model weights: `settings.apply_models_dir()` maps it to `HF_HOME` and `OLLAMA_MODELS` at start.
