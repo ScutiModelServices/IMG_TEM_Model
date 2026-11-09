@@ -149,6 +149,13 @@ def test_settings_can_be_saved_and_reset(page):
     sync_api.expect(page.locator("#setting-max_inflight")).to_have_value("0")
 
 
+def test_gpu_note_follows_the_tag(page):
+    page.fill("#admin", PASSWORD)
+    page.click("#signin-button")
+    sync_api.expect(page.locator("#gpu-note")).to_be_visible()  # CONFIG.tags has gpu
+    sync_api.expect(page.locator("#voices-card")).to_be_hidden()
+
+
 def _open_playground(page):
     """Use separate admin and public credentials."""
     page.fill("#admin", PASSWORD)
