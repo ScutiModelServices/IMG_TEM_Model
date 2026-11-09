@@ -135,11 +135,14 @@ def _download(checkpoint: Path) -> None:
     """Fetches the published file from Google Drive and keeps it only if its SHA-256 is the pinned one."""
     import gdown
     from huggingface_hub import snapshot_download
+    from progress import tracking
 
     checkpoint.parent.mkdir(parents=True, exist_ok=True)
     temp = checkpoint.with_name(f"{checkpoint.name}.{uuid.uuid4().hex}.part")
     try:
-        if not gdown.download(id=CHECKPOINT_DRIVE_ID, output=str(temp), quiet=True):
+        with tracking("TEM checkpoint", None, checkpoint.parent):  # the .part file grows in this folder
+            ok = gdown.download(id=CHECKPOINT_DRIVE_ID, output=str(temp), quiet=True)
+        if not ok:
             raise EngineError("The download from Google Drive failed", 502)
         if _sha256(temp) != CHECKPOINT_SHA256:
             raise EngineError("The downloaded file does not match the published SHA-256", 502)
