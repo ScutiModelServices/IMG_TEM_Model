@@ -1,11 +1,12 @@
 [project]
-name = "tem-service"
+name = "img_tem_model"
 description = "One HTTP service that runs the TEM image generation model (ImageNet classes) on the GPU for every project"
 version = "0.1.0"
 license = "MIT"
 license-files = ["LICENSE"]
 requires-python = ">=3.11"
 dependencies = [
+    "python-dotenv==1.2.2",
     "fastapi>=0.115",
     "uvicorn>=0.30",
     "torch==2.7.1",
@@ -43,4 +44,4 @@ bypass-selection = true  # runs from src/, installs only the dependencies
 [tool.pytest.ini_options]
 pythonpath = ["src"]
 testpaths = ["tests"]
-markers = ["real_model: needs tem_code/tem.py, the checkpoint and a GPU; skipped when they are missing"]
+markers = ["real_model: needs _tem_code/tem.py, the checkpoint and a GPU; skipped when they are missing"]

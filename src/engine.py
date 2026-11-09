@@ -99,11 +99,11 @@ def _sha256(path: Path) -> str:
 
 
 def code_dir() -> Path:
-    return Path(os.environ.get("TEM_CODE_DIR", Path(__file__).resolve().parents[1] / "tem_code"))
+    return Path(os.environ.get("SERVICE_CODE_DIR", Path(__file__).resolve().parents[1] / "_tem_code"))
 
 
 def models_dir() -> Path:
-    return Path(os.environ.get("TEM_MODELS_DIR") or os.environ.get("HF_HOME") or "~/.cache/tem").expanduser()
+    return Path(os.environ.get("SERVICE_MODELS_DIR") or os.environ.get("HF_HOME") or "~/.cache/tem").expanduser()
 
 
 def load(checkpoint: Path, device: str) -> Sampler:
@@ -127,13 +127,14 @@ def load(checkpoint: Path, device: str) -> Sampler:
                       num_energy_heads=3, head_layers=heads)
     model.load_state_dict(state)
     model = model.to(device).eval().requires_grad_(False)
-    vae = AutoencoderKL.from_pretrained(VAE_REPO).to(device).eval().requires_grad_(False)
+    vae = AutoencoderKL.from_pretrained(VAE_REPO, cache_dir=str(models_dir() / "hub"), local_files_only=True).to(device).eval().requires_grad_(False)
     return Sampler(model, vae, device)
 
 
 def _download(checkpoint: Path) -> None:
     """Fetches the published file from Google Drive and keeps it only if its SHA-256 is the pinned one."""
     import gdown
+    from huggingface_hub import snapshot_download
 
     checkpoint.parent.mkdir(parents=True, exist_ok=True)
     temp = checkpoint.with_name(f"{checkpoint.name}.{uuid.uuid4().hex}.part")
@@ -142,6 +143,7 @@ def _download(checkpoint: Path) -> None:
             raise EngineError("The download from Google Drive failed", 502)
         if _sha256(temp) != CHECKPOINT_SHA256:
             raise EngineError("The downloaded file does not match the published SHA-256", 502)
+        snapshot_download(VAE_REPO, cache_dir=str(models_dir() / "hub"))
         os.replace(temp, checkpoint)
     finally:
         temp.unlink(missing_ok=True)
@@ -150,12 +152,20 @@ def _download(checkpoint: Path) -> None:
 def _cached_sha(checkpoint: Path) -> str | None:
     """The pinned hash when the file is there. Hashing 2.4 GB on every check is too slow, so only the size is compared;
     a damaged file of the right size is caught when the weights are downloaded again."""
-    return CHECKPOINT_SHA256 if checkpoint.is_file() and checkpoint.stat().st_size > 2_000_000_000 else None
+    if not checkpoint.is_file() or checkpoint.stat().st_size <= 2_000_000_000:
+        return None
+    from huggingface_hub import snapshot_download
+    try:
+        vae = Path(snapshot_download(VAE_REPO, cache_dir=str(models_dir() / "hub"), local_files_only=True))
+        complete = (vae / "config.json").is_file() and any((vae / name).is_file() for name in ("diffusion_pytorch_model.bin", "diffusion_pytorch_model.safetensors"))
+        return CHECKPOINT_SHA256 if complete else None
+    except (OSError, ValueError):
+        return None
 
 
 def default_marker() -> Path:
     """File in the shared models volume whose content changes when one replica downloads new weights."""
-    configured = os.environ.get("TEM_WEIGHTS_MARKER")
+    configured = os.environ.get("SERVICE_WEIGHTS_MARKER")
     return Path(configured) if configured else models_dir() / ".tem-weights-version"
 
 
@@ -202,7 +212,7 @@ class TEMEngine:
         with self._load_lock:
             if self._loaded is None:
                 if self._cached_sha_of(self.checkpoint) is None:
-                    self._download_of(self.checkpoint)
+                    raise EngineError("Model weights are not downloaded. Ask an admin to press Download on the Updates card.", 503)
                 self._loaded = self._loader(self.checkpoint, self.device)
             return self._loaded
 

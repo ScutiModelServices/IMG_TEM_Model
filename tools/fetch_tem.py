@@ -1,4 +1,4 @@
-"""Downloads tem.py, the model code of github.com/int-lee/TEM, at the pinned commit into tem_code/ (git-ignored).
+"""Downloads tem.py, the model code of github.com/int-lee/TEM, at the pinned commit into _tem_code/ (git-ignored).
 
 The code has no license file, so it is fetched here and never copied into this repository.
     python tools/fetch_tem.py [target_dir]
@@ -14,7 +14,7 @@ URL = f"https://raw.githubusercontent.com/int-lee/TEM/{COMMIT}/tem.py"
 
 
 def main() -> int:
-    target = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(__file__).resolve().parent.parent / "tem_code"
+    target = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(__file__).resolve().parent.parent / "_tem_code"
     with urllib.request.urlopen(URL, timeout=60) as reply:
         data = reply.read()
     if hashlib.sha256(data).hexdigest() != SHA256:
