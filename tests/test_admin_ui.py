@@ -258,3 +258,9 @@ def test_sidebar_responsive_layout_and_keyboard_toggle(page):
             sync_api.expect(page.locator("#sidebar-toggle")).to_have_attribute("aria-expanded", str(expanded).lower())
             assert page.evaluate("document.documentElement.scrollWidth <= innerWidth")
             assert page.locator("#admin-sidebar").bounding_box()["x"] < page.locator("#page-content").bounding_box()["x"]
+
+
+def test_playground_class_id_form_has_a_step_size(page):
+    _open_playground(page)
+    page.select_option("#pg-operation", label="Generate by class ID")
+    sync_api.expect(page.locator("#pg-step_size")).to_be_visible()
