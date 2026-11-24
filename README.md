@@ -48,7 +48,7 @@ downloads it again (after checking the hash). `/metrics` (admin password) is Pro
 Weights load only from downloaded files. An empty installation still serves `/admin/` and `/health` with `ready: false`; inference returns 503. Open `/admin/` → **Updates** → **Download** before the first inference. Checks run online without downloading; only an admin Download replaces weights and reloads replicas.
 
 ```bash
-docker compose up -d --build        # http://<host>:29240, needs the NVIDIA Container Toolkit
+docker compose --env-file .env.compose up -d --build        # http://<host>:29240, needs the NVIDIA Container Toolkit
 ```
 
 Without Docker: `run.bat` (uv, listens on `127.0.0.1:29240`). Setup fetches `tem.py`; admin Download installs the 2.4 GB

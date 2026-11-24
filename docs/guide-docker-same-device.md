@@ -21,7 +21,7 @@ Run TEM-XL/2 ImageNet image generation on an NVIDIA GPU (about 4 GB of GPU memor
    Set `SERVICE_ADMIN_PASSWORD` (empty = no auth and no admin page, fine for a local test). Leave `SERVICE_PORT=29240`. Leave `SERVICE_REPLICAS=1`.
 2. Start:
    ```bash
-   docker compose up -d --build
+   docker compose --env-file .env.compose up -d --build
    ```
    The admin Download installs the 2.4 GB checkpoint and VAE; `tools/fetch_tem.py` fetches `tem.py` into the `img_tem_model_models` volume. `img_tem_model_lb` starts only after the service is healthy
    (up to 300 s grace). Watch with `docker compose ps` and `docker compose logs -f img_tem_model`.
@@ -42,7 +42,7 @@ Run TEM-XL/2 ImageNet image generation on an NVIDIA GPU (about 4 GB of GPU memor
 
 ## Settings
 
-In `.env` next to `docker-compose.yml`:
+In `.env.compose` next to `docker-compose.yml` (start with `docker compose --env-file .env.compose up -d --build`):
 
 | Variable | Default | Effect |
 |---|---|---|
@@ -63,7 +63,7 @@ does not pass these; add the variable under `environment:` of `img_tem_model` to
 docker compose ps          # state
 docker compose logs -f img_tem_model
 docker compose down        # stop (the weights volume is kept)
-docker compose up -d --build && docker compose restart img_tem_model_lb   # after a code change
+docker compose --env-file .env.compose up -d --build && docker compose restart img_tem_model_lb   # after a code change
 ```
 
 ## Time it
