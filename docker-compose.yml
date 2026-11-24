@@ -8,6 +8,7 @@ name: img_tem_model
 
 services:
   img_tem_model:
+    extra_hosts: ["host.docker.internal:host-gateway"]  # reaches services published on the host
     build: .
     image: img_tem_model:latest
     restart: unless-stopped
